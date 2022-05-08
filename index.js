@@ -22,13 +22,13 @@ async function run() {
             res.send(products);
         })
 
-        // app.get("/products/:id", async (req, res) => {
-        //     const reqId = req.params.id;
-        //     // const query = query = .toString()
-        //     // const query = { _id: ObjectId(id) }
-        //     const perfume = await productCollection.findOne(query);
-        //     res.send(perfume);
-        // })
+        app.get("/products/:id", async (req, res) => {
+            const id = req.params.id;
+            // const query = query = .toString()
+            const query = { _id: ObjectId(id) }
+            const perfume = await productCollection.findOne(query);
+            res.send(perfume);
+        })
 
         // Post
         app.post("/products", async (req, res) => {
@@ -36,7 +36,13 @@ async function run() {
             const result = await productCollection.insertOne(newPerfume);
             res.send(result);
         })
-
+        // Delete
+        app.delete("/products/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
+            res.send(result);
+        })
     }
     finally {
 
