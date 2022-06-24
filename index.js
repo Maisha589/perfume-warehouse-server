@@ -7,7 +7,9 @@ const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
-
+// middleware
+app.use(cors());
+app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.brcug.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -56,6 +58,7 @@ async function run() {
             res.send(result);
         })
 
+        // restock
         app.put("/products/:id", async (req, res) => {
             const id = req.params.id;
             const newStock = req.body;
@@ -70,15 +73,15 @@ async function run() {
             res.send(result);
         })
 
-        // Order
-        app.get("/order", async (req, res) => {
+        // get order per user
+        app.get("/order/user", async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
-            const cursor = orderCollection.find(query);
-            const orders = await cursor.toArray();
+            const orders = await orderCollection.find(query).toArray();
             res.send(orders);
         })
 
+        // place order
         app.post("/order", async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
@@ -92,11 +95,6 @@ async function run() {
 
 run().catch(console.dir);
 
-
-
-// middleware
-app.use(cors());
-app.use(express.json());
 
 app.get("/", (req, res) => {
     res.send("running royal perfume server")
